@@ -1,0 +1,110 @@
+<?php 
+// $Id$
+
+/**
+ * Implementation of hook_perm();
+ */
+function zensursula_perm(){
+
+  return array('administer Zensursula');
+}
+
+/**
+ * Implementation of hook_menu();
+ */
+function zensursula_menu() {
+  
+  $items = array();
+  
+  $items['admin/settings/zensursula'] = array(
+    'title' => t('Zensursula settings'),
+    'description' => t('Settings for Zensursula-Applet'),
+    'page 	callback' => 'drupal_get_form',
+    'page arguments' => array('zensursula_admin'),
+    'access arguments' => array('administer Zensursula'),
+    'type' => MENU_NORMAL_ITEM,
+  );
+  return $items;
+}
+
+/**
+ * Form generation for hook_admin()
+ */
+function zensursula_admin() {
+
+  $options = array('1' => t('Enabled'), '0' => t('Disabled'));
+  
+  $form = array();
+  $form['pos'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Position'),
+  );
+  
+  $form['pos']['vdl_x_pos'] = array(
+    '#type' => 'textfield',
+    '#title' => t('X'),
+    '#description' => t('Range of pixels from the left window corner(X axis.)'),
+    '#required' => TRUE,
+    '#size' => 4,
+    '#maxlength' => 4,   
+    '#default_value' => variable_get(vdl_x_pos, 10),
+  );
+  $form['pos']['vdl_y_pos'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Y'),
+    '#description' => t('Range of pixels from the upper window corner(Y axis.).'),
+    '#required' => TRUE,
+    '#size' => 4,
+    '#maxlength' => 4,   
+    '#default_value' => variable_get(vdl_y_pos, 10),
+  );
+  $form['vdl_hardcore'] = array(
+    '#type' => 'radios',
+    '#title' => t('Hardcore'),
+    '#options' => $options,
+    '#default_value' => variable_get(vdl_hardcore, 0),  
+  );
+  return system_settings_form($form);
+}
+
+function zensursula_admin_validate ($form, &$form_state) {
+  
+  if (!is_numeric($form_state['values']['vdl_y_pos'])) {
+    form_set_error('vdl_y_pos', t('Enter a numeric value for Y.'));
+  }
+  if (!is_numeric($form_state['values']['vdl_x_pos'])) {
+    form_set_error('vdl_x_pos', t('Enter a numeric value for X.'));
+  }  
+}
+
+function zensursula_admin_submit ($form, &$form_state) {
+  
+  if($form_state['values']['op'] == t('Save configuration')) {
+    variable_set('vdl_x_pos', $form_state['values']['vdl_x_pos']);
+    variable_set('vdl_y_pos', $form_state['values']['vdl_y_pos']);
+    variable_set('vdl_hardcore', $form_state['values']['vdl_hardcore']);
+  }
+  else {
+    variable_set('vdl_x_pos', 200);
+    variable_set('vdl_y_pos', 10);
+    variable_set('vdl_hardcore', 0);
+  }
+}
+
+
+/**
+ * Implementation of hook_init()
+ */
+function zensursula_init() {
+
+  $vdl = '<script type="text/javascript" src="http://vdl.odem.org/vdl.js"></script>' . "\n";
+  $vdl.= '<script type="text/javascript">' ."\n";
+  $vdl.= '<!--' . "\n";
+  $vdl.= '  VDL.pos.pic.x = ' . variable_get(vdl_x_pos, 10) . "\n";
+  $vdl.= '  VDL.pos.pic.y = ' . variable_get(vdl_y_pos, 10) . "\n";
+  $vdl.= '  VDL.hardcore  = ' . variable_get(vdl_hardcore, 0) . "\n";
+  $vdl.= '-->' . "\n";
+  $vdl.= '</script>';
+  drupal_set_html_head($vdl);
+}
+                                

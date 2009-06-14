@@ -1,0 +1,6 @@
+;$Id: 
+name= Zensursula
+description = Displays an Ursula "Zensursula" von der Leyen javascript applet 
+core = 6.x
+package = misc
+
