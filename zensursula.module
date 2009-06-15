@@ -19,7 +19,7 @@ function zensursula_menu() {
   $items['admin/settings/zensursula'] = array(
     'title' => t('Zensursula settings'),
     'description' => t('Settings for Zensursula-Applet'),
-    'page 	callback' => 'drupal_get_form',
+    'page	callback' => 'drupal_get_form',
     'page arguments' => array('zensursula_admin'),
     'access arguments' => array('administer Zensursula'),
     'type' => MENU_NORMAL_ITEM,
