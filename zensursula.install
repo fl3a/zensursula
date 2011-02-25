@@ -1,5 +1,4 @@
 <?php
-// $Id$ 
 
 function zensursula_uninstall() {
   variable_del('vdl_x_pos');
